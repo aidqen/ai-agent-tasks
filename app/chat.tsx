@@ -1,6 +1,10 @@
+import { useChat } from '@ai-sdk/react';
+import * as NavigationBar from 'expo-navigation-bar';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import { fetch as expoFetch } from 'expo/fetch';
+import React, { useEffect } from 'react';
 import { SafeAreaView, View } from 'react-native';
+
 
 import ChatHistory from '../components/chat/ChatHistory';
 import ChatInput from '../components/chat/ChatInput';
@@ -28,31 +32,51 @@ const initialMessages = [
 ];
 
 export default function ChatScreen() {
-  const [messages, setMessages] = useState(initialMessages);
+  const {
+    input,
+    messages,
+    error,
+    handleInputChange,
+    handleSubmit
+  } = useChat({
+    fetch: expoFetch as unknown as typeof globalThis.fetch,
+    api: '/api/chat',
+    // body: {
+      
+    // },
+    onError: error => console.error(error.message, 'ERROR'),
+  });
+
   const router = useRouter();
 
-  const handleSendMessage = (content: string) => {
-    // Add user message
-    const newUserMessage = {
-      id: Date.now().toString(),
-      content,
-      isUser: true,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    };
-    
-    setMessages((prevMessages) => [...prevMessages, newUserMessage]);
-    
-    // In a real app, you would send the message to an AI service here
-    // and handle the response
+  useEffect(() => {
+    NavigationBar.setBackgroundColorAsync('#121212')// Set background color
+    NavigationBar.setStyle('dark')// Set background color
+  }, [])
+
+
+
+  const handleSendMessage = (message: string) => {
+    // Create a synthetic form submit event
+    const event = {
+      preventDefault: () => { }
+    } as React.FormEvent<HTMLFormElement>;
+
+    // Set the input value and then submit the form
+    // handleInputChange({ target: { value: message } } as React.ChangeEvent<HTMLInputElement>);
+    handleSubmit(event);
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-dark-bg">
-      {/* <StatusBar barStyle="light-content" backgroundColor="#050A10" /> */}
-      <View className="flex-1">
-        <ChatHistory messages={messages} />
-        <ChatInput onSend={handleSendMessage} />
-      </View>
-    </SafeAreaView>
+    <>
+
+      <SafeAreaView className="flex-1 bg-dark-bg">
+        {/* <StatusBar barStyle="light-content" backgroundColor="#050A10" /> */}
+        <View className="flex-1">
+          <ChatHistory messages={messages} error={error} />
+          <ChatInput onSend={handleSendMessage} input={input} handleInputChange={handleInputChange} />
+        </View>
+      </SafeAreaView>
+    </>
   );
 }

@@ -25,10 +25,9 @@ const sampleConversations = [
 ];
 
 const quickPrompts = [
-  "Explain a concept",
-  "Write code for me",
-  "Debug my code",
-  "Optimize my solution",
+  "What are my tasks for today?",
+  "Help me plan a vacation",
+  "Help me set a plan for monthly goals",
 ];
 
 export default function Index() {
@@ -70,7 +69,7 @@ export default function Index() {
                 key={index}
                 onPress={() => handleQuickPrompt(prompt)}
                 className="bg-medium-gray rounded-lg p-4 mr-3 mb-3">
-                <Text className="text-light-gray font-medium">{prompt}</Text>
+                <Text className="text-light-gray text-base font-medium">{prompt}</Text>
               </TouchableOpacity>
             ))}
           </View>

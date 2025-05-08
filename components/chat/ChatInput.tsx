@@ -1,19 +1,27 @@
 import { Feather, MaterialIcons } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import React, { ChangeEvent } from 'react';
 import { Platform, TextInput, TouchableOpacity, View } from 'react-native';
 
 type ChatInputProps = {
   onSend: (message: string) => void;
+  input: string;
+  handleInputChange: (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => void;
 };
 
-export default function ChatInput({ onSend }: ChatInputProps) {
-  const [input, setInput] = useState('');
+export default function ChatInput({ onSend, input, handleInputChange }: ChatInputProps) {
 
   const handleSend = () => {
     if (input.trim()) {
       onSend(input);
-      setInput('');
+      // Create a synthetic event object that matches the expected type
+      handleInputChange({ target: { value: '' } } as React.ChangeEvent<HTMLInputElement>);
     }
+  };
+  
+  // Create a wrapper function to adapt React Native's string-based onChange to React's event-based onChange
+  const handleTextChange = (text: string) => {
+    // Create a synthetic event object that matches the expected type
+    handleInputChange({ target: { value: text } } as React.ChangeEvent<HTMLInputElement>);
   };
 
   return (
@@ -29,7 +37,7 @@ export default function ChatInput({ onSend }: ChatInputProps) {
             placeholder="Ask anything"
             placeholderTextColor="#6B7280"
             value={input}
-            onChangeText={setInput}
+            onChangeText={handleTextChange}
             multiline={Platform.OS === 'ios'}
             style={{ maxHeight: 100 }}
             maxLength={500}

@@ -7,14 +7,15 @@ type Message = {
   id: string;
   content: string;
   isUser: boolean;
-  timestamp: string;
+  created_at: string;
 };
 
 type ChatHistoryProps = {
   messages: Message[];
+  error: Error | undefined;
 };
 
-export default function ChatHistory({ messages }: ChatHistoryProps) {
+export default function ChatHistory({ messages, error }: ChatHistoryProps) {
   return (
     <ScrollView 
       className="flex-1 bg-dark-bg"
@@ -39,7 +40,7 @@ export default function ChatHistory({ messages }: ChatHistoryProps) {
             key={message.id}
             content={message.content}
             isUser={message.isUser}
-            timestamp={message.timestamp}
+            timestamp={message.created_at}
           />
         ))
       )}
